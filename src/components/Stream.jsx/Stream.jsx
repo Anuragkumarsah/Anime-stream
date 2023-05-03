@@ -40,7 +40,7 @@ function Stream() {
   const [selectedQuality, setSelectedQuality] = useState('720');
 
   //---------------- url for fixing CORS policy ---------------//
-  const cors_handle_url = "https://corsanywhere.herokuapp.com/";
+  const cors_handle_url = "https://cors.zimjs.com/";
 
   //----------------- url for detail of the anime episode ---------------//
   const url = `https://api.consumet.org/anime/gogoanime/watch/${episode_id}`
@@ -61,6 +61,15 @@ function Stream() {
     hdQuality.current = result.filter(vid => vid.quality === '1080p');
     sdQuality.current = result.filter(vid => vid.quality === '720p');
     lowQuality.current = result.filter(vid => vid.quality === '480p');
+    console.log(result);
+
+    // const referer  = cors_handle_url + url;
+    // const res = await axios({
+    //   method: 'get',
+    //   url: `https://cors.zimjs.com/${result.sources[2].url}`,
+    //   headers: {'Origin': 'http://localhost:5173'}
+    // });
+    // console.log(res);
     let sources = [];
     if(hdQuality.current[0]) sources.push({ src: `${cors_handle_url + hdQuality.current[0].url}`,
     label: '1080p',
@@ -73,6 +82,11 @@ function Stream() {
     if(lowQuality.current[0]) sources.push({src: `${cors_handle_url + lowQuality.current[0].url}`,
     label: '480p',
     res: '480'});
+    // console.log(referer);
+    // sources.push({ src: referer, 
+    //   label: '720p',
+    //   res:'720'
+    // });
     setVideoSources(sources);
   }
 
@@ -114,7 +128,7 @@ function Stream() {
               
             ))}</div>
         </div>
-        <div className='player-wrapper relative bg-black w-full'>
+        <div className='player-wrapper overflow-auto relative bg-black w-full'>
           <ReactPlayer
             width='100%'
             height='100%'
@@ -122,8 +136,11 @@ function Stream() {
             className="react-player"
             playing
             url={videoSources && videoSources.filter((source) => source.res === selectedQuality)[0].src}
+            // url={videoSources && cors_handle_url + videoSources}
             ref={videoPlayer}
             />
+            {/* <iframe className='w-full h-full flex justify-center items-center px-20' src={videoSources[0].src}></iframe> */}
+
           </div>
       </div></>) : (<LoadingScreen/>)}
     </>
